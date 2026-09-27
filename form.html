@@ -24,12 +24,10 @@
             font-style: normal;
         }
 
-
         * {
             box-sizing: border-box;
-            font-family: IRANSans;
+            font-family: 'IRANSans', 'Segoe UI', sans-serif;
         }
-        
         body {
             background-color: #f4f6f9;
             display: flex;
@@ -108,7 +106,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label>شماره فاکتور:</label>
-                <input type="text" name="factor_no" required placeholder="مثال: ۱۲۳۴">
+                <input type="text" name="factor_no" class="only-numbers" required placeholder="مثال: ۱۲۳۴">
             </div>
             <div class="form-group">
                 <label>تاریخ (شمسی):</label>
@@ -123,7 +121,7 @@
             </div>
             <div class="form-group">
                 <label>تلفن خریدار:</label>
-                <input type="text" name="customer_phone" placeholder="۰۹۱۲...">
+                <input type="text" name="customer_phone" class="only-numbers" placeholder="۰۹۱۲...">
             </div>
         </div>
 
@@ -134,7 +132,7 @@
             </div>
             <div class="form-group">
                 <label>قیمت ۱ گرم طلای آب شده (ریال):</label>
-                <input type="text" name="gold_price" placeholder="مثال: ۴۱,۶۰۰,۰۰۰">
+                <input type="text" name="gold_price" class="currency-input" placeholder="مثال: ۴۱,۶۰۰,۰۰۰">
             </div>
         </div>
 
@@ -148,26 +146,26 @@
             </div>
             <div class="form-group">
                 <label>عیار:</label>
-                <input type="text" name="item_purity" value="18" required>
+                <input type="text" name="item_purity" class="only-numbers" value="18" required>
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
                 <label>وزن (گرم):</label>
-                <input type="text" name="weight_g" required placeholder="۴">
+                <input type="text" name="weight_g" class="only-numbers" required placeholder="۴">
             </div>
             <div class="form-group">
                 <label>وزن (سوت):</label>
-                <input type="text" name="weight_s" placeholder="۰۵۰">
+                <input type="text" name="weight_s" class="only-numbers" placeholder="۰۵۰">
             </div>
             <div class="form-group">
                 <label>قیمت هر گرم (ریال):</label>
-                <input type="text" name="unit_price" placeholder="۵,۲۰۰,۰۰۰">
+                <input type="text" name="unit_price" class="currency-input" placeholder="۵,۲۰۰,۰۰۰">
             </div>
             <div class="form-group">
                 <label>قیمت کل (ریال):</label>
-                <input type="text" name="total_price" required placeholder="۲۱,۰۰۰,۰۰۰">
+                <input type="text" name="total_price" class="currency-input" required placeholder="۲۱,۰۰۰,۰۰۰">
             </div>
         </div>
 
@@ -180,12 +178,37 @@
     function getJalaliToday() {
         const today = new Date();
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-        const faDate = new Intl.DateTimeFormat('fa-IR-u-nu-latn', options).format(today);
-        return faDate; // فرمت YYYY/MM/DD
+        return new Intl.DateTimeFormat('fa-IR-u-nu-latn', options).format(today);
     }
 
-    // مقداردهی اولیه فیلد تاریخ
     document.getElementById('date_input').value = getJalaliToday();
+
+    // تبدیل اعداد فارسی به انگلیسی برای پردازش صحیح
+    function faToEnDigits(str) {
+        return str.replace(/[۰-۹]/g, function(w) {
+            const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return persianDigits.indexOf(w);
+        });
+    }
+
+    // جداسازی سه تایی اعداد هنگام تایپ (کلاس currency-input)
+    document.querySelectorAll('.currency-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            let value = faToEnDigits(e.target.value).replace(/\D/g, '');
+            if (value) {
+                e.target.value = Number(value).toLocaleString('en-US');
+            } else {
+                e.target.value = '';
+            }
+        });
+    });
+
+    // فقط دریافت عدد برای سایر فیلدهای عددی (کلاس only-numbers)
+    document.querySelectorAll('.only-numbers').forEach(input => {
+        input.addEventListener('input', function(e) {
+            e.target.value = faToEnDigits(e.target.value).replace(/\D/g, '');
+        });
+    });
 </script>
 
 </body>
