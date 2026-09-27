@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود اطلاعات فاکتور فروش طلا</title>
+    <style>
+        @font-face{font-family:IRANSans;font-style:normal;font-weight:300;src:url(./fonts/IRANSansWeb_Light.eot);src:url(./fonts/IRANSansWeb_Light.eot?#iefix) format("embedded-opentype"),url(./fonts/IRANSansWeb_Light.woff2) format("woff2"),url(./fonts/IRANSansWeb_Light.woff) format("woff"),url(./fonts/IRANSansWeb_Light.ttf) format("truetype")}
+        @font-face{
+            font-family:icons;
+            src:url(/fonts/icons.eot);
+            src:url(/fonts/icons.ttf);
+        }
+        @font-face{
+            font-family:BTitr;
+            src:url(/fonts/BTitr.otf);
+            src:url(/fonts/BTitr.ttf);
+        }
+        @font-face {
+            font-family: 'yekan';
+            src: url(/fonts/web_Yekan.woff);
+            src: url(/fonts/web_Yekan.eot?#iefix) format("embedded-opentype"),url(/fonts/web_Yekan.woff) format("woff"),url(/fonts/web_Yekan.ttf) format("truetype"),url(/fonts/web_Yekan.svg#BYekan) format("svg");
+            font-weight: normal;
+            font-style: normal;
+        }
+
+
+        * {
+            box-sizing: border-box;
+            font-family: IRANSans;
+        }
+        
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+        }
+        h2 {
+            text-align: center;
+            color: #b8860b;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #f0e68c;
+            padding-bottom: 10px;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 13px;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        input, textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input:focus, textarea:focus {
+            border-color: #b8860b;
+        }
+        .btn-submit {
+            background-color: #b8860b;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+        .btn-submit:hover {
+            background-color: #966f0d;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>صدور فاکتور گالری طلا و جواهر</h2>
+    <form action="receipt.html" method="GET">
+        <div class="form-row">
+            <div class="form-group">
+                <label>شماره فاکتور:</label>
+                <input type="text" name="factor_no" required placeholder="مثال: ۱۲۳۴">
+            </div>
+            <div class="form-group">
+                <label>تاریخ (شمسی):</label>
+                <input type="text" id="date_input" name="date" required placeholder="۱۴۰۳/۰۱/۰۱">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>نام خریدار:</label>
+                <input type="text" name="customer_name" required placeholder="نام و نام خانوادگی">
+            </div>
+            <div class="form-group">
+                <label>تلفن خریدار:</label>
+                <input type="text" name="customer_phone" placeholder="۰۹۱۲...">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>آدرس خریدار:</label>
+                <input type="text" name="customer_address" placeholder="شهر / خیابان">
+            </div>
+            <div class="form-group">
+                <label>قیمت ۱ گرم طلای آب شده (ریال):</label>
+                <input type="text" name="gold_price" placeholder="مثال: ۴۱,۶۰۰,۰۰۰">
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px dashed #ccc; margin: 20px 0;">
+
+        <h4>مشخصات جنس:</h4>
+        <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+                <label>نوع جنس (شرح کالا):</label>
+                <input type="text" name="item_name" required placeholder="مثال: انگشتر سولتر آوا">
+            </div>
+            <div class="form-group">
+                <label>عیار:</label>
+                <input type="text" name="item_purity" value="18" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>وزن (گرم):</label>
+                <input type="text" name="weight_g" required placeholder="۴">
+            </div>
+            <div class="form-group">
+                <label>وزن (سوت):</label>
+                <input type="text" name="weight_s" placeholder="۰۵۰">
+            </div>
+            <div class="form-group">
+                <label>قیمت هر گرم (ریال):</label>
+                <input type="text" name="unit_price" placeholder="۵,۲۰۰,۰۰۰">
+            </div>
+            <div class="form-group">
+                <label>قیمت کل (ریال):</label>
+                <input type="text" name="total_price" required placeholder="۲۱,۰۰۰,۰۰۰">
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">ثبت و مشاهده فاکتور A5</button>
+    </form>
+</div>
+
+<script>
+    // تابع محاسبه و درج خودکار تاریخ امروز به شمسی
+    function getJalaliToday() {
+        const today = new Date();
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        const faDate = new Intl.DateTimeFormat('fa-IR-u-nu-latn', options).format(today);
+        return faDate; // فرمت YYYY/MM/DD
+    }
+
+    // مقداردهی اولیه فیلد تاریخ
+    document.getElementById('date_input').value = getJalaliToday();
+</script>
+
+</body>
+</html>
