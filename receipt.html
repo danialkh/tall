@@ -6,34 +6,16 @@
     <title>فاکتور فروش A5</title>
     <style>
         @font-face{font-family:IRANSans;font-style:normal;font-weight:300;src:url(./fonts/IRANSansWeb_Light.eot);src:url(./fonts/IRANSansWeb_Light.eot?#iefix) format("embedded-opentype"),url(./fonts/IRANSansWeb_Light.woff2) format("woff2"),url(./fonts/IRANSansWeb_Light.woff) format("woff"),url(./fonts/IRANSansWeb_Light.ttf) format("truetype")}
-        @font-face{
-            font-family:icons;
-            src:url(/fonts/icons.eot);
-            src:url(/fonts/icons.ttf);
-        }
-        @font-face{
-            font-family:BTitr;
-            src:url(/fonts/BTitr.otf);
-            src:url(/fonts/BTitr.ttf);
-        }
-        @font-face {
-            font-family: 'yekan';
-            src: url(/fonts/web_Yekan.woff);
-            src: url(/fonts/web_Yekan.eot?#iefix) format("embedded-opentype"),url(/fonts/web_Yekan.woff) format("woff"),url(/fonts/web_Yekan.ttf) format("truetype"),url(/fonts/web_Yekan.svg#BYekan) format("svg");
-            font-weight: normal;
-            font-style: normal;
-        }
-
 
         * {
             box-sizing: border-box;
-            font-family: IRANSans;
+            font-family: 'IRANSans', sans-serif;
         }
 
         body {
             background-color: #e0e0e0;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -41,7 +23,8 @@
 
         /* دکمه‌های کنترلی بالای صفحه */
         .no-print {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            text-align: center;
         }
         .btn {
             padding: 8px 16px;
@@ -61,14 +44,16 @@
 
         /* طراحی برگه A5 در وب (افقی / Landscape) */
         .a5-paper {
-            width: 210mm;
-            height: 148mm;
+            width: 190mm;
+            height: 125mm;
             background-color: #fff9e6; /* تم ملایم طلایی */
             border: 1px solid #d4af37;
-            padding: 10mm;
+            padding: 6mm 8mm;
             position: relative;
-            /* سایه در صفحه وب */
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         /* هدر فاکتور */
@@ -77,37 +62,37 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #b8860b;
-            padding-bottom: 8px;
-            margin-bottom: 10px;
+            padding-bottom: 4px;
+            margin-bottom: 6px;
         }
         .logo-title {
             text-align: center;
         }
         .logo-title h1 {
             margin: 0;
-            font-size: 18px;
+            font-size: 17px;
             color: #8b6508;
         }
         .logo-title p {
             margin: 2px 0 0;
-            font-size: 11px;
+            font-size: 9px;
             letter-spacing: 1px;
         }
         .meta-info {
-            font-size: 12px;
-            line-height: 1.6;
+            font-size: 10.5px;
+            line-height: 1.4;
         }
 
         /* اطلاعات مشتری */
         .customer-info {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            font-size: 12px;
+            gap: 6px;
+            font-size: 10.5px;
             background-color: rgba(255, 255, 255, 0.6);
-            padding: 6px;
+            padding: 5px 8px;
             border-radius: 4px;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             border: 1px solid #f0e68c;
         }
         .info-item {
@@ -118,12 +103,12 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
-            margin-bottom: 10px;
+            font-size: 10.5px;
+            margin-bottom: 6px;
         }
         th, td {
             border: 1px solid #b8860b;
-            padding: 6px;
+            padding: 5px;
             text-align: center;
         }
         th {
@@ -131,49 +116,67 @@
             color: #4a3b00;
         }
 
-        /* بخش فوتر و توضیحات */
-        .footer {
-            position: absolute;
-            bottom: 8mm;
-            left: 10mm;
-            right: 10mm;
-            font-size: 10px;
-            line-height: 1.5;
-            border-top: 1px solid #ccc;
-            padding-top: 5px;
+        .total-summary {
+            text-align: left;
+            font-size: 11.5px;
+            font-weight: bold;
+            margin-left: 8px;
+            margin-top: 2px;
         }
+
+        /* بخش مهر و فوتر */
+        .bottom-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: auto;
+            padding-top: 2px;
+        }
+
         .stamp-area {
-            position: absolute;
-            left: 15mm;
-            bottom: 15mm;
             border: 1px dashed #b8860b;
-            padding: 5px 15px;
+            padding: 5px 12px;
             color: #b8860b;
-            font-size: 11px;
+            font-size: 9.5px;
             border-radius: 50%;
-            transform: rotate(-10deg);
+            text-align: center;
+            transform: rotate(-5deg);
+        }
+
+        .footer {
+            font-size: 9px;
+            line-height: 1.3;
+            border-top: 1px solid #ccc;
+            padding-top: 3px;
+            width: 100%;
+            margin-top: 4px;
         }
 
         /* تنظیمات مخصوص چاپ (Print CSS) */
         @media print {
-            body {
-                background: none;
-                padding: 0;
-                margin: 0;
+            html, body {
+                width: 210mm;
+                height: 128mm;
+                background: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                overflow: hidden !important;
             }
             .no-print {
                 display: none !important;
             }
             .a5-paper {
-                box-shadow: none !important; /* حذف سایه در چاپ */
-                border: 1px solid #000;
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                page-break-after: always;
+                box-shadow: none !important;
+                border: 1px solid #d4af37 !important;
+                width: 190mm !important;
+                height: 125mm !important;
+                margin: 2mm auto !important;
+                padding: 6mm 8mm !important;
+                page-break-after: avoid !important;
+                page-break-inside: avoid !important;
             }
             @page {
-                size: A5 landscape; /* تنظیم سایز A5 افقی */
+                size: A5 landscape;
                 margin: 0;
             }
         }
@@ -188,81 +191,81 @@
 
     <!-- برگه A5 -->
     <div class="a5-paper">
-        <div class="header">
-            <div class="meta-info">
-                <div>شماره: <span id="v_factor_no">---</span></div>
-                <div>تاریخ: <span id="v_date">---</span></div>
+        <div>
+            <div class="header">
+                <div class="meta-info">
+                    <div>شماره فاکتور: <span id="v_factor_no">---</span></div>
+                    <div>تاریخ: <span id="v_date">---</span></div>
+                </div>
+                <div class="logo-title">
+                    <h1>گالری طلا و جواهر</h1>
+                    <p>JEWELRY GALLERY</p>
+                </div>
+                <div class="meta-info">
+                    <div>نرخ طلای آب‌شده:</div>
+                    <div><span id="v_gold_price">---</span> ریال</div>
+                </div>
             </div>
-            <div class="logo-title">
-                <h1>گالری طلا و جواهر</h1>
-                <p>JEWELRY GALLERY</p>
+
+            <div class="customer-info">
+                <div class="info-item">نام خریدار: <b id="v_customer_name">---</b></div>
+                <div class="info-item">تلفن: <span id="v_customer_phone">---</span></div>
+                <div class="info-item" style="flex: 1 1 100%;">آدرس: <span id="v_customer_address">---</span></div>
             </div>
-            <div class="meta-info">
-                <div>نرخ طلای آب‌شده:</div>
-                <div><span id="v_gold_price">---</span> ریال</div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>نوع جنس (شرح کالا)</th>
+                        <th>عیار</th>
+                        <th>وزن (گرم)</th>
+                        <th>اجرت (%)</th>
+                        <th>قیمت هر گرم (ریال)</th>
+                        <th>قیمت کل (ریال)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="v_item_name">---</td>
+                        <td id="v_item_purity">---</td>
+                        <td id="v_weight_g">---</td>
+                        <td id="v_wage_percent">---</td>
+                        <td id="v_unit_price">---</td>
+                        <td id="v_total_price">---</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="total-summary">
+                مبلغ قابل پرداخت: <span id="v_total_price_sum">---</span> ریال
             </div>
         </div>
 
-        <div class="customer-info">
-            <div class="info-item">نام خریدار: <b id="v_customer_name">---</b></div>
-            <div class="info-item">تلفن: <span id="v_customer_phone">---</span></div>
-            <div class="info-item" style="flex: 1 1 100%;">آدرس: <span id="v_customer_address">---</span></div>
+        <div>
+            <div class="bottom-section">
+                <div></div>
+                <div class="stamp-area">
+                    گالری طلا و جواهر<br>مهر و امضا
+                </div>
+            </div>
+
+            <div class="footer">
+                <b>توضیحات:</b> جنس فروخته شده پس گرفته نمی‌شود. ارائه این فاکتور هنگام تعویض یا فروش الزامی است.<br>
+                آدرس: سمنان، خیابان اصلی، پاساژ طلا و جواهر | تلفن: ۰۲۱-۱۲۳۴۵۶۷۸
+            </div>
         </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>نوع جنس</th>
-                    <th>عیار</th>
-                    <th>وزن (گرم)</th>
-                    <th>وزن (سوت)</th>
-                    <th>قیمت هر گرم (ریال)</th>
-                    <th>قیمت کل (ریال)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td id="v_item_name">---</td>
-                    <td id="v_item_purity">---</td>
-                    <td id="v_weight_g">---</td>
-                    <td id="v_weight_s">---</td>
-                    <td id="v_unit_price">---</td>
-                    <td id="v_total_price">---</td>
-                </tr>
-            </tbody>
-        </table>
-
-
-        <br><br>
-
-        <div style="text-align: left; font-size: 13px; font-weight: bold; margin-left: 10px;">
-            جمع کل: <span id="v_total_price_sum">---</span> ریال
-        </div>
-
-
-        <br><br><br>
-
-        <div class="stamp-area">
-            گالری طلا و جواهر<br>مهر و امضا
-        </div>
-        <br>
-
-        <div class="footer">
-            <b>توضیحات:</b> جنس فروخته شده پس گرفته نمی‌شود. در موقع فروش فاکتور الزامی است.<br>
-            آدرس: خیابان اصلی، پاساژ طلا و جواهر | تلفن: ۰۲۱-۱۲۳۴۵۶۷۸
-        </div>
-
-        <br>
     </div>
 
     <!-- اسکریپت دریافت اطلاعات از URL و جای‌گذاری در صفحه -->
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         
-        function setFieldValue(paramName, elementId) {
+        function setFieldValue(paramName, elementId, defaultValue = '---') {
             const val = urlParams.get(paramName);
-            if (val) {
+            if (val && val.trim() !== '') {
                 document.getElementById(elementId).innerText = val;
+            } else {
+                document.getElementById(elementId).innerText = defaultValue;
             }
         }
 
@@ -275,7 +278,9 @@
         setFieldValue('item_name', 'v_item_name');
         setFieldValue('item_purity', 'v_item_purity');
         setFieldValue('weight_g', 'v_weight_g');
-        setFieldValue('weight_s', 'v_weight_s');
+        setFieldValue('wage_percent', 'v_wage_percent', '۰٪');
+        
+        // تفکیک دقیق قیمت هر گرم و قیمت کل
         setFieldValue('unit_price', 'v_unit_price');
         
         const totalPrice = urlParams.get('total_price');

@@ -6,24 +6,6 @@
     <title>ورود اطلاعات فاکتور فروش طلا</title>
     <style>
         @font-face{font-family:IRANSans;font-style:normal;font-weight:300;src:url(./fonts/IRANSansWeb_Light.eot);src:url(./fonts/IRANSansWeb_Light.eot?#iefix) format("embedded-opentype"),url(./fonts/IRANSansWeb_Light.woff2) format("woff2"),url(./fonts/IRANSansWeb_Light.woff) format("woff"),url(./fonts/IRANSansWeb_Light.ttf) format("truetype")}
-        @font-face{
-            font-family:icons;
-            src:url(/fonts/icons.eot);
-            src:url(/fonts/icons.ttf);
-        }
-        @font-face{
-            font-family:BTitr;
-            src:url(/fonts/BTitr.otf);
-            src:url(/fonts/BTitr.ttf);
-        }
-        @font-face {
-            font-family: 'yekan';
-            src: url(/fonts/web_Yekan.woff);
-            src: url(/fonts/web_Yekan.eot?#iefix) format("embedded-opentype"),url(/fonts/web_Yekan.woff) format("woff"),url(/fonts/web_Yekan.ttf) format("truetype"),url(/fonts/web_Yekan.svg#BYekan) format("svg");
-            font-weight: normal;
-            font-style: normal;
-        }
-
         * {
             box-sizing: border-box;
             font-family: 'IRANSans', 'Segoe UI', sans-serif;
@@ -131,8 +113,8 @@
                 <input type="text" name="customer_address" placeholder="شهر / خیابان">
             </div>
             <div class="form-group">
-                <label>قیمت ۱ گرم طلای آب شده (ریال):</label>
-                <input type="text" name="gold_price" class="currency-input" placeholder="مثال: ۴۱,۶۰۰,۰۰۰">
+                <label>قیمت ۱ گرم طلای آب شده 18 عیار (ریال):</label>
+                <input type="text" id="gold_price" name="gold_price" class="currency-input" required placeholder="مثال: ۴۱,۶۰۰,۰۰۰">
             </div>
         </div>
 
@@ -146,69 +128,125 @@
             </div>
             <div class="form-group">
                 <label>عیار:</label>
-                <input type="text" name="item_purity" class="only-numbers" value="18" required>
+                <input type="text" id="item_purity" name="item_purity" class="only-numbers" value="750" required>
             </div>
         </div>
 
         <div class="form-row">
-            <div class="form-group">
-                <label>وزن (گرم):</label>
-                <input type="text" name="weight_g" class="only-numbers" required placeholder="۴">
+            <div class="form-group" style="flex: 1.5;">
+                <label>وزن (گرم - اعشاری):</label>
+                <input type="text" id="weight_g" name="weight_g" class="decimal-input" required placeholder="مثال: 2.12">
             </div>
-            <div class="form-group">
-                <label>وزن (سوت):</label>
-                <input type="text" name="weight_s" class="only-numbers" placeholder="۰۵۰">
+            <div class="form-group" style="flex: 1.5;">
+                <label>اجرت (% یا مبلغ):</label>
+                <input type="text" id="wage_percent" name="wage_percent" class="only-numbers" placeholder="مثال: 12">
             </div>
             <div class="form-group">
                 <label>قیمت هر گرم (ریال):</label>
-                <input type="text" name="unit_price" class="currency-input" placeholder="۵,۲۰۰,۰۰۰">
+                <input type="text" id="unit_price" name="unit_price" class="currency-input" readonly placeholder="محاسبه خودکار">
             </div>
             <div class="form-group">
                 <label>قیمت کل (ریال):</label>
-                <input type="text" name="total_price" class="currency-input" required placeholder="۲۱,۰۰۰,۰۰۰">
+                <input type="text" id="total_price" name="total_price" class="currency-input" required readonly placeholder="محاسبه خودکار">
             </div>
         </div>
 
-        <button type="submit" class="btn-submit">ثبت و مشاهده فاکتور A5</button>
+        <button type="submit" class="btn-submit" target="_blank">ثبت و مشاهده فاکتور A5</button>
     </form>
 </div>
 
 <script>
-    // تابع محاسبه و درج خودکار تاریخ امروز به شمسی
+    // تابع درج تاریخ امروز به شمسی
     function getJalaliToday() {
         const today = new Date();
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
         return new Intl.DateTimeFormat('fa-IR-u-nu-latn', options).format(today);
     }
-
     document.getElementById('date_input').value = getJalaliToday();
 
-    // تبدیل اعداد فارسی به انگلیسی برای پردازش صحیح
+    // تبدیل اعداد فارسی به انگلیسی
     function faToEnDigits(str) {
-        return str.replace(/[۰-۹]/g, function(w) {
+        if (!str) return '';
+        return String(str).replace(/[۰-۹]/g, function(w) {
             const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
             return persianDigits.indexOf(w);
         });
     }
 
-    // جداسازی سه تایی اعداد هنگام تایپ (کلاس currency-input)
+    // جداکننده سه‌تایی اعداد
+    function formatNumber(num) {
+        if (isNaN(num) || num === '') return '';
+        return Number(num).toLocaleString('en-US');
+    }
+
+    // پاکسازی عدد از کاما برای محاسبات
+    function cleanNumber(str) {
+        let cleaned = faToEnDigits(str).replace(/,/g, '');
+        return Number(cleaned) || 0;
+    }
+
+    // فرمت‌کننده ورودی‌های عددی قیمت
     document.querySelectorAll('.currency-input').forEach(input => {
         input.addEventListener('input', function(e) {
-            let value = faToEnDigits(e.target.value).replace(/\D/g, '');
-            if (value) {
-                e.target.value = Number(value).toLocaleString('en-US');
-            } else {
-                e.target.value = '';
-            }
+            let value = cleanNumber(e.target.value);
+            e.target.value = value ? formatNumber(value) : '';
         });
     });
 
-    // فقط دریافت عدد برای سایر فیلدهای عددی (کلاس only-numbers)
+    // فیلدهای فقط عدد صحیح (مثل عیار یا درصد اجرت)
     document.querySelectorAll('.only-numbers').forEach(input => {
         input.addEventListener('input', function(e) {
             e.target.value = faToEnDigits(e.target.value).replace(/\D/g, '');
+            calculatePrice();
         });
     });
+
+    // فیلد وزن اعشاری (اجازه ورود نقطه/ممز و اعداد)
+    const weightInput = document.getElementById('weight_g');
+    weightInput.addEventListener('input', function(e) {
+        let val = faToEnDigits(e.target.value);
+        // جایگزینی ممیز فارسی با نقطه انگلیسی و حذف کاراکترهای اضافی به جز اعداد و یک نقطه
+        val = val.replace(/[^0-9.]/g, '');
+        let parts = val.split('.');
+        if (parts.length > 2) {
+            val = parts[0] + '.' + parts.slice(1).join('');
+        }
+        e.target.value = val;
+        calculatePrice();
+    });
+
+    // گوش دادن به تغییرات قیمت طلا
+    document.getElementById('gold_price').addEventListener('input', function() {
+        let val = cleanNumber(this.value);
+        this.value = val ? formatNumber(val) : '';
+        calculatePrice();
+    });
+
+    // فرمول اصلی محاسبه قیمت هر گرم و قیمت کل
+    function calculatePrice() {
+        let goldPrice = cleanNumber(document.getElementById('gold_price').value); // قیمت پایه ۱ گرم طلای آب شده
+        let purity = cleanNumber(document.getElementById('item_purity').value) || 750; // عیار
+        let totalWeight = parseFloat(faToEnDigits(weightInput.value)) || 0; // وزن اعشاری گرم
+        let wagePercent = cleanNumber(document.getElementById('wage_percent').value); // درصد اجرت
+
+        if (goldPrice > 0 && totalWeight > 0) {
+            // قیمت پایه هر گرم بر اساس عیار
+            let baseUnitPrice = (goldPrice / 750) * purity;
+            
+            // قیمت هر گرم با احتساب درصد اجرت
+            let unitPrice = baseUnitPrice + (baseUnitPrice * (wagePercent / 100));
+            
+            // قیمت کل (قیمت هر گرم ضرب در وزن کل)
+            let totalPrice = unitPrice * totalWeight;
+
+            // قرار دادن مقادیر در فیلدها برای ارسال صحیح به رسید
+            document.getElementById('unit_price').value = formatNumber(Math.round(unitPrice));
+            document.getElementById('total_price').value = formatNumber(Math.round(totalPrice));
+        } else {
+            document.getElementById('unit_price').value = '';
+            document.getElementById('total_price').value = '';
+        }
+    }
 </script>
 
 </body>
