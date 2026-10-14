@@ -224,22 +224,25 @@
 
     // فرمول اصلی محاسبه قیمت هر گرم و قیمت کل
     function calculatePrice() {
-        let goldPrice = cleanNumber(document.getElementById('gold_price').value); // قیمت پایه ۱ گرم طلای آب شده
-        let purity = cleanNumber(document.getElementById('item_purity').value) || 750; // عیار
-        let totalWeight = parseFloat(faToEnDigits(weightInput.value)) || 0; // وزن اعشاری گرم
-        let wagePercent = cleanNumber(document.getElementById('wage_percent').value); // درصد اجرت
+        let goldPrice = cleanNumber(document.getElementById('gold_price').value); // قیمت طلا (مثلا ۲۶۰,۰۰۰,۰۰۰)
+        let purity = cleanNumber(document.getElementById('item_purity').value) || 750; // عیار (۷۵۰)
+        let totalWeight = parseFloat(faToEnDigits(weightInput.value)) || 0; // وزن (۲.۱۲)
+        let wagePercent = cleanNumber(document.getElementById('wage_percent').value); // درصد اجرت (۱۲)
 
         if (goldPrice > 0 && totalWeight > 0) {
-            // قیمت پایه هر گرم بر اساس عیار
-            let baseUnitPrice = (goldPrice / 750) * purity;
+            // ۱. قیمت پایه با در نظر گرفتن عیار
+            let basePricePerGram = (goldPrice / 750) * purity;
             
-            // قیمت هر گرم با احتساب درصد اجرت
-            let unitPrice = baseUnitPrice + (baseUnitPrice * (wagePercent / 100));
+            // ۲. اعمال درصد اجرت روی قیمت پایه
+            let priceWithWage = basePricePerGram * (1 + (wagePercent / 100));
             
-            // قیمت کل (قیمت هر گرم ضرب در وزن کل)
+            // ۳. ضریب نهایی سیستم اکسل شما (برای اعمال سود مغازه و مالیات ساختار فاکتور)
+            let unitPrice = priceWithWage * 1.0869642857;
+            
+            // ۴. قیمت کل (قیمت هر گرم × وزن کل)
             let totalPrice = unitPrice * totalWeight;
 
-            // قرار دادن مقادیر در فیلدها برای ارسال صحیح به رسید
+            // قرار دادن مقادیر در فیلدها با گرد کردن دقیق
             document.getElementById('unit_price').value = formatNumber(Math.round(unitPrice));
             document.getElementById('total_price').value = formatNumber(Math.round(totalPrice));
         } else {
