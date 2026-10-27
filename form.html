@@ -17,6 +17,7 @@
             align-items: center;
             padding: 20px;
             margin: 0;
+            min-height: 100vh;
         }
         .container {
             background-color: #fff;
@@ -26,12 +27,23 @@
             width: 100%;
             max-width: 700px;
         }
-        h2 {
-            text-align: center;
-            color: #b8860b;
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 25px;
             border-bottom: 2px solid #f0e68c;
-            padding-bottom: 10px;
+            padding-bottom: 12px;
+        }
+        .logo-img {
+            width: 55px;
+            height: 55px;
+            object-fit: contain;
+        }
+        h2 {
+            color: #b8860b;
+            margin: 0;
+            font-size: 19px;
         }
         .form-row {
             display: flex;
@@ -83,7 +95,11 @@
 <body>
 
 <div class="container">
-    <h2>صدور فاکتور گالری طلا و جواهر وستا</h2>
+    <div class="header-section">
+        <h2>صدور فاکتور گالری طلا و جواهر نوآ</h2>
+        <img src="img/logo.png" alt="لوگو گالری طلا و جواهر نوآ" class="logo-img">
+    </div>
+
     <form action="receipt.html" method="GET">
         <div class="form-row">
             <div class="form-group">
@@ -156,7 +172,6 @@
 </div>
 
 <script>
-    // تابع درج تاریخ امروز به شمسی
     function getJalaliToday() {
         const today = new Date();
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -164,7 +179,6 @@
     }
     document.getElementById('date_input').value = getJalaliToday();
 
-    // تبدیل اعداد فارسی به انگلیسی
     function faToEnDigits(str) {
         if (!str) return '';
         return String(str).replace(/[۰-۹]/g, function(w) {
@@ -173,19 +187,16 @@
         });
     }
 
-    // جداکننده سه‌تایی اعداد
     function formatNumber(num) {
         if (isNaN(num) || num === '') return '';
         return Number(num).toLocaleString('en-US');
     }
 
-    // پاکسازی عدد از کاما برای محاسبات
     function cleanNumber(str) {
         let cleaned = faToEnDigits(str).replace(/,/g, '');
         return Number(cleaned) || 0;
     }
 
-    // فرمت‌کننده ورودی‌های عددی قیمت
     document.querySelectorAll('.currency-input').forEach(input => {
         input.addEventListener('input', function(e) {
             let value = cleanNumber(e.target.value);
@@ -193,7 +204,6 @@
         });
     });
 
-    // فیلدهای فقط عدد صحیح (مثل عیار یا درصد اجرت)
     document.querySelectorAll('.only-numbers').forEach(input => {
         input.addEventListener('input', function(e) {
             e.target.value = faToEnDigits(e.target.value).replace(/\D/g, '');
@@ -201,11 +211,9 @@
         });
     });
 
-    // فیلد وزن اعشاری (اجازه ورود نقطه/ممز و اعداد)
     const weightInput = document.getElementById('weight_g');
     weightInput.addEventListener('input', function(e) {
         let val = faToEnDigits(e.target.value);
-        // جایگزینی ممیز فارسی با نقطه انگلیسی و حذف کاراکترهای اضافی به جز اعداد و یک نقطه
         val = val.replace(/[^0-9.]/g, '');
         let parts = val.split('.');
         if (parts.length > 2) {
@@ -215,34 +223,24 @@
         calculatePrice();
     });
 
-    // گوش دادن به تغییرات قیمت طلا
     document.getElementById('gold_price').addEventListener('input', function() {
         let val = cleanNumber(this.value);
         this.value = val ? formatNumber(val) : '';
         calculatePrice();
     });
 
-    // فرمول اصلی محاسبه قیمت هر گرم و قیمت کل
     function calculatePrice() {
-        let goldPrice = cleanNumber(document.getElementById('gold_price').value); // قیمت طلا (مثلا ۲۶۰,۰۰۰,۰۰۰)
-        let purity = cleanNumber(document.getElementById('item_purity').value) || 750; // عیار (۷۵۰)
-        let totalWeight = parseFloat(faToEnDigits(weightInput.value)) || 0; // وزن (۲.۱۲)
-        let wagePercent = cleanNumber(document.getElementById('wage_percent').value); // درصد اجرت (۱۲)
+        let goldPrice = cleanNumber(document.getElementById('gold_price').value);
+        let purity = cleanNumber(document.getElementById('item_purity').value) || 750;
+        let totalWeight = parseFloat(faToEnDigits(weightInput.value)) || 0;
+        let wagePercent = cleanNumber(document.getElementById('wage_percent').value);
 
         if (goldPrice > 0 && totalWeight > 0) {
-            // ۱. قیمت پایه با در نظر گرفتن عیار
             let basePricePerGram = (goldPrice / 750) * purity;
-            
-            // ۲. اعمال درصد اجرت روی قیمت پایه
             let priceWithWage = basePricePerGram * (1 + (wagePercent / 100));
-            
-            // ۳. ضریب نهایی سیستم اکسل شما (برای اعمال سود مغازه و مالیات ساختار فاکتور)
             let unitPrice = priceWithWage * 1.0869642857;
-            
-            // ۴. قیمت کل (قیمت هر گرم × وزن کل)
             let totalPrice = unitPrice * totalWeight;
 
-            // قرار دادن مقادیر در فیلدها با گرد کردن دقیق
             document.getElementById('unit_price').value = formatNumber(Math.round(unitPrice));
             document.getElementById('total_price').value = formatNumber(Math.round(totalPrice));
         } else {
