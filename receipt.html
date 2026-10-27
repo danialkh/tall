@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>فاکتور فروش A5</title>
     <style>
         @font-face{font-family:IRANSans;font-style:normal;font-weight:300;src:url(./fonts/IRANSansWeb_Light.eot);src:url(./fonts/IRANSansWeb_Light.eot?#iefix) format("embedded-opentype"),url(./fonts/IRANSansWeb_Light.woff2) format("woff2"),url(./fonts/IRANSansWeb_Light.woff) format("woff"),url(./fonts/IRANSansWeb_Light.ttf) format("truetype")}
@@ -225,17 +225,15 @@
                         <th>عیار</th>
                         <th>وزن (گرم)</th>
                         <th>اجرت (%)</th>
-                        <th>قیمت هر گرم (ریال)</th>
                         <th>قیمت کل (ریال)</th>
                     </tr>
                 </thead>
-                <tbody>
+    <tbody>
                     <tr>
                         <td id="v_item_name">---</td>
                         <td id="v_item_purity">---</td>
                         <td id="v_weight_g">---</td>
                         <td id="v_wage_percent">---</td>
-                        <td id="v_unit_price">---</td>
                         <td id="v_total_price">---</td>
                     </tr>
                 </tbody>
@@ -283,8 +281,6 @@
         setFieldValue('item_purity', 'v_item_purity');
         setFieldValue('weight_g', 'v_weight_g');
         setFieldValue('wage_percent', 'v_wage_percent', '۰٪');
-        
-        setFieldValue('unit_price', 'v_unit_price');
         
         const totalPrice = urlParams.get('total_price');
         if (totalPrice) {
