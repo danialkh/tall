@@ -25,7 +25,7 @@
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 700px;
+            max-width: 800px;
         }
         .header-section {
             display: flex;
@@ -53,7 +53,7 @@
         }
         .form-group {
             flex: 1;
-            min-width: 200px;
+            min-width: 180px;
             display: flex;
             flex-direction: column;
         }
@@ -73,6 +73,35 @@
         }
         input:focus, textarea:focus {
             border-color: #b8860b;
+        }
+        .product-item {
+            background: #faf7eb;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #b8860b;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 5px;
+            align-self: flex-end;
+        }
+        .btn-add {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 15px;
         }
         .btn-submit {
             background-color: #b8860b;
@@ -100,7 +129,7 @@
         <img src="img/logo.png" alt="لوگو گالری طلا و جواهر نوآ" class="logo-img">
     </div>
 
-    <form action="receipt.html" method="GET">
+    <form id="invoiceForm" action="receipt.html" method="GET" onsubmit="prepareData(event)">
         <div class="form-row">
             <div class="form-group">
                 <label>شماره فاکتور:</label>
@@ -136,38 +165,17 @@
 
         <hr style="border: 0; border-top: 1px dashed #ccc; margin: 20px 0;">
 
-        <h4>مشخصات جنس:</h4>
-        <div class="form-row">
-            <div class="form-group" style="flex: 2;">
-                <label>نوع جنس (شرح کالا):</label>
-                <input type="text" name="item_name" required placeholder="مثال: انگشتر سولتر آوا">
-            </div>
-            <div class="form-group">
-                <label>عیار:</label>
-                <input type="text" id="item_purity" name="item_purity" class="only-numbers" value="750" required>
-            </div>
+        <h4>مشخصات اقلام فاکتور:</h4>
+        <div id="products-container">
+            <!-- کانتینر محصولات پویا -->
         </div>
 
-        <div class="form-row">
-            <div class="form-group" style="flex: 1.5;">
-                <label>وزن (گرم - اعشاری):</label>
-                <input type="text" id="weight_g" name="weight_g" class="decimal-input" required placeholder="مثال: 2.12">
-            </div>
-            <div class="form-group" style="flex: 1.5;">
-                <label>اجرت (% یا مبلغ):</label>
-                <input type="text" id="wage_percent" name="wage_percent" class="only-numbers" placeholder="مثال: 12">
-            </div>
-            <div class="form-group">
-                <label>قیمت هر گرم (ریال):</label>
-                <input type="text" id="unit_price" name="unit_price" class="currency-input" readonly placeholder="محاسبه خودکار">
-            </div>
-            <div class="form-group">
-                <label>قیمت کل (ریال):</label>
-                <input type="text" id="total_price" name="total_price" class="currency-input" required readonly placeholder="محاسبه خودکار">
-            </div>
-        </div>
+        <button type="button" class="btn-add" onclick="addProductRow()">+ افزودن محصول جدید</button>
+        
+        <!-- فیلد پنهان برای ارسال کل محصولات به صفحه رسید -->
+        <input type="hidden" name="items_data" id="items_data">
 
-        <button type="submit" class="btn-submit" target="_blank">ثبت و مشاهده فاکتور A5</button>
+        <button type="submit" class="btn-submit">ثبت و مشاهده فاکتور A5</button>
     </form>
 </div>
 
@@ -197,57 +205,118 @@
         return Number(cleaned) || 0;
     }
 
-    document.querySelectorAll('.currency-input').forEach(input => {
-        input.addEventListener('input', function(e) {
-            let value = cleanNumber(e.target.value);
-            e.target.value = value ? formatNumber(value) : '';
-        });
-    });
+    // افزودن سطر محصول جدید
+    function addProductRow() {
+        const container = document.getElementById('products-container');
+        const rowId = Date.now();
+        
+        const html = `
+            <div class="product-item" id="row_${rowId}">
+                <div class="form-row">
+                    <div class="form-group" style="flex: 2;">
+                        <label>نوع جنس (شرح کالا):</label>
+                        <input type="text" class="p_name" required placeholder="مثال: انگشتر سولتر آوا">
+                    </div>
+                    <div class="form-group">
+                        <label>عیار:</label>
+                        <input type="text" class="p_purity only-nums" value="750" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>وزن (گرم):</label>
+                        <input type="text" class="p_weight decimal-inp" required placeholder="مثال: 2.12">
+                    </div>
+                    <div class="form-group">
+                        <label>اجرت (%):</label>
+                        <input type="text" class="p_wage only-nums" placeholder="مثال: 12">
+                    </div>
+                    <div class="form-group">
+                        <label>قیمت کل (ریال):</label>
+                        <input type="text" class="p_total currency-inp" readonly placeholder="محاسبه خودکار">
+                    </div>
+                </div>
+                <button type="button" class="btn-danger" onclick="removeProductRow('row_${rowId}')">حذف این محصول</button>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+        initRowEvents(document.getElementById(`row_${rowId}`));
+    }
 
-    document.querySelectorAll('.only-numbers').forEach(input => {
-        input.addEventListener('input', function(e) {
-            e.target.value = faToEnDigits(e.target.value).replace(/\D/g, '');
-            calculatePrice();
-        });
-    });
-
-    const weightInput = document.getElementById('weight_g');
-    weightInput.addEventListener('input', function(e) {
-        let val = faToEnDigits(e.target.value);
-        val = val.replace(/[^0-9.]/g, '');
-        let parts = val.split('.');
-        if (parts.length > 2) {
-            val = parts[0] + '.' + parts.slice(1).join('');
+    function removeProductRow(rowId) {
+        const row = document.getElementById(rowId);
+        if (document.querySelectorAll('.product-item').length > 1) {
+            row.remove();
+        } else {
+            alert('حداقل وجود یک محصول در فاکتور الزامی است.');
         }
-        e.target.value = val;
-        calculatePrice();
-    });
+    }
+
+    function initRowEvents(rowElement) {
+        rowElement.querySelectorAll('.only-nums').forEach(input => {
+            input.addEventListener('input', function(e) {
+                e.target.value = faToEnDigits(e.target.value).replace(/\D/g, '');
+                calculateRow(rowElement);
+            });
+        });
+
+        rowElement.querySelectorAll('.decimal-inp').forEach(input => {
+            input.addEventListener('input', function(e) {
+                let val = faToEnDigits(e.target.value).replace(/[^0-9.]/g, '');
+                let parts = val.split('.');
+                if (parts.length > 2) val = parts[0] + '.' + parts.slice(1).join('');
+                e.target.value = val;
+                calculateRow(rowElement);
+            });
+        });
+    }
 
     document.getElementById('gold_price').addEventListener('input', function() {
         let val = cleanNumber(this.value);
         this.value = val ? formatNumber(val) : '';
-        calculatePrice();
+        document.querySelectorAll('.product-item').forEach(row => calculateRow(row));
     });
 
-    function calculatePrice() {
+    function calculateRow(rowElement) {
         let goldPrice = cleanNumber(document.getElementById('gold_price').value);
-        let purity = cleanNumber(document.getElementById('item_purity').value) || 750;
-        let totalWeight = parseFloat(faToEnDigits(weightInput.value)) || 0;
-        let wagePercent = cleanNumber(document.getElementById('wage_percent').value);
+        let purity = cleanNumber(rowElement.querySelector('.p_purity').value) || 750;
+        let weight = parseFloat(faToEnDigits(rowElement.querySelector('.p_weight').value)) || 0;
+        let wagePercent = cleanNumber(rowElement.querySelector('.p_wage').value);
 
-        if (goldPrice > 0 && totalWeight > 0) {
+        if (goldPrice > 0 && weight > 0) {
             let basePricePerGram = (goldPrice / 750) * purity;
             let priceWithWage = basePricePerGram * (1 + (wagePercent / 100));
             let unitPrice = priceWithWage * 1.0869642857;
-            let totalPrice = unitPrice * totalWeight;
+            let totalPrice = unitPrice * weight;
 
-            document.getElementById('unit_price').value = formatNumber(Math.round(unitPrice));
-            document.getElementById('total_price').value = formatNumber(Math.round(totalPrice));
+            rowElement.querySelector('.p_total').value = formatNumber(Math.round(totalPrice));
         } else {
-            document.getElementById('unit_price').value = '';
-            document.getElementById('total_price').value = '';
+            rowElement.querySelector('.p_total').value = '';
         }
     }
+
+    // آماده‌سازی اطلاعات برای ارسال به صفحه رسید
+    function prepareData(e) {
+        const rows = document.querySelectorAll('.product-item');
+        let items = [];
+
+        rows.forEach(row => {
+            items.push({
+                name: row.querySelector('.p_name').value,
+                purity: row.querySelector('.p_purity').value,
+                weight: row.querySelector('.p_weight').value,
+                wage: row.querySelector('.p_wage').value || '۰',
+                total: row.querySelector('.p_total').value
+            });
+        });
+
+        document.getElementById('items_data').value = JSON.stringify(items);
+    }
+
+    // ایجاد اولین سطر به صورت پیش‌فرض در بارگذاری صفحه
+    window.onload = function() {
+        addProductRow();
+    };
 </script>
 
 </body>

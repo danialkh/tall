@@ -21,7 +21,6 @@
             align-items: center;
         }
 
-        /* دکمه‌های کنترلی بالای صفحه */
         .no-print {
             margin-bottom: 10px;
             text-align: center;
@@ -42,11 +41,10 @@
             display: inline-block;
         }
 
-        /* طراحی برگه A5 در وب (افقی / Landscape) */
         .a5-paper {
             width: 190mm;
             height: 125mm;
-            background-color: #fff9e6; /* تم ملایم طلایی */
+            background-color: #fff9e6;
             border: 1px solid #d4af37;
             padding: 6mm 8mm;
             position: relative;
@@ -56,7 +54,6 @@
             justify-content: space-between;
         }
 
-        /* هدر فاکتور */
         .header {
             display: flex;
             justify-content: space-between;
@@ -88,7 +85,6 @@
             object-fit: contain;
         }
 
-        /* اطلاعات مشتری */
         .customer-info {
             display: flex;
             flex-wrap: wrap;
@@ -104,16 +100,15 @@
             flex: 1 1 45%;
         }
 
-        /* جدول اجناس */
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 10.5px;
+            font-size: 10px;
             margin-bottom: 6px;
         }
         th, td {
             border: 1px solid #b8860b;
-            padding: 5px;
+            padding: 4px;
             text-align: center;
         }
         th {
@@ -123,13 +118,12 @@
 
         .total-summary {
             text-align: left;
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: bold;
             margin-left: 8px;
             margin-top: 2px;
         }
 
-        /* بخش مهر و فوتر */
         .bottom-section {
             display: flex;
             justify-content: space-between;
@@ -149,7 +143,7 @@
         }
 
         .footer {
-            font-size: 9px;
+            font-size: 8.5px;
             line-height: 1.3;
             border-top: 1px solid #ccc;
             padding-top: 3px;
@@ -157,7 +151,6 @@
             margin-top: 4px;
         }
 
-        /* تنظیمات مخصوص چاپ (Print CSS) */
         @media print {
             html, body {
                 width: 210mm;
@@ -194,7 +187,6 @@
         <button class="btn" onclick="window.print()">پرینت فاکتور (A5)</button>
     </div>
 
-    <!-- برگه A5 -->
     <div class="a5-paper">
         <div>
             <div class="header">
@@ -221,6 +213,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>ردیف</th>
                         <th>نوع جنس (شرح کالا)</th>
                         <th>عیار</th>
                         <th>وزن (گرم)</th>
@@ -228,19 +221,13 @@
                         <th>قیمت کل (ریال)</th>
                     </tr>
                 </thead>
-    <tbody>
-                    <tr>
-                        <td id="v_item_name">---</td>
-                        <td id="v_item_purity">---</td>
-                        <td id="v_weight_g">---</td>
-                        <td id="v_wage_percent">---</td>
-                        <td id="v_total_price">---</td>
-                    </tr>
+                <tbody id="items_table_body">
+                    <!-- سطرها به صورت پویا اضافه می‌شوند -->
                 </tbody>
             </table>
 
             <div class="total-summary">
-                مبلغ قابل پرداخت: <span id="v_total_price_sum">---</span> ریال
+                مبلغ قابل پرداخت کل: <span id="v_total_price_sum">---</span> ریال
             </div>
         </div>
 
@@ -254,11 +241,11 @@
 
             <div class="footer">
                 <b>توضیحات:</b> جنس فروخته شده پس گرفته نمی‌شود. ارائه این فاکتور هنگام تعویض یا فروش الزامی است.<br>
-آدرس: ققنوس طبقه دوم بازار طلا و جواهر واحد ۷۴ | تلفن:۰۹۱۲۲۳۱۹۸۷۷ , ۰۹۱۲۲۳۴۲۳۹۵                 </div>
+آدرس: ققنوس طبقه دوم بازار طلا و جواهر واحد ۷۳ | تلفن:۰۹۱۲۲۳۱۹۸۷۷ , ۰۹۱۲۲۳۴۲۳۹۵
+            </div>
         </div>
     </div>
 
-    <!-- اسکریپت دریافت اطلاعات از URL و جای‌گذاری در صفحه -->
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         
@@ -277,15 +264,38 @@
         setFieldValue('customer_name', 'v_customer_name');
         setFieldValue('customer_phone', 'v_customer_phone');
         setFieldValue('customer_national_id', 'v_customer_national_id');
-        setFieldValue('item_name', 'v_item_name');
-        setFieldValue('item_purity', 'v_item_purity');
-        setFieldValue('weight_g', 'v_weight_g');
-        setFieldValue('wage_percent', 'v_wage_percent', '۰٪');
-        
-        const totalPrice = urlParams.get('total_price');
-        if (totalPrice) {
-            document.getElementById('v_total_price').innerText = totalPrice;
-            document.getElementById('v_total_price_sum').innerText = totalPrice;
+
+        // دریافت و نمایش اقلام فاکتور به همراه محاسبه جمع کل نهایی
+        const itemsDataJson = urlParams.get('items_data');
+        const tbody = document.getElementById('items_table_body');
+        let grandTotal = 0;
+
+        if (itemsDataJson) {
+            try {
+                const items = JSON.parse(itemsDataJson);
+                tbody.innerHTML = '';
+                
+                items.forEach((item, index) => {
+                    // پاک کردن کاما برای محاسبه جمع کل
+                    let cleanTotal = Number(String(item.total).replace(/,/g, '')) || 0;
+                    grandTotal += cleanTotal;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.name || '---'}</td>
+                        <td>${item.purity || '---'}</td>
+                        <td>${item.weight || '---'}</td>
+                        <td>${item.wage || '۰'}٪</td>
+                        <td>${item.total || '---'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('v_total_price_sum').innerText = Number(grandTotal).toLocaleString('en-US');
+            } catch (err) {
+                console.error("خطا در پردازش اطلاعات اقلام", err);
+            }
         }
     </script>
 </body>
