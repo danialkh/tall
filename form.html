@@ -229,7 +229,7 @@
                     </div>
                     <div class="form-group">
                         <label>اجرت (%):</label>
-                        <input type="text" class="p_wage only-nums" placeholder="مثال: 12">
+                        <input type="text" class="p_wage decimal-inp" placeholder="مثال: 12.5">
                     </div>
                     <div class="form-group">
                         <label>قیمت کل (ریال):</label>
@@ -281,7 +281,9 @@
         let goldPrice = cleanNumber(document.getElementById('gold_price').value);
         let purity = cleanNumber(rowElement.querySelector('.p_purity').value) || 750;
         let weight = parseFloat(faToEnDigits(rowElement.querySelector('.p_weight').value)) || 0;
-        let wagePercent = cleanNumber(rowElement.querySelector('.p_wage').value);
+        
+        // تغییر از cleanNumber به parseFloat برای پشتیبانی از اعشار اجرت
+        let wagePercent = parseFloat(faToEnDigits(rowElement.querySelector('.p_wage').value)) || 0;
 
         if (goldPrice > 0 && weight > 0) {
             let basePricePerGram = (goldPrice / 750) * purity;
