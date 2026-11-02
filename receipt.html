@@ -214,7 +214,7 @@
                 <thead>
                     <tr>
                         <th>ردیف</th>
-                        <th>نوع جنس (شرح کالا)</th>
+                        <th>نوع کالا / شرح</th>
                         <th>عیار</th>
                         <th>وزن (گرم)</th>
                         <th>اجرت (%)</th>
@@ -265,7 +265,6 @@
         setFieldValue('customer_phone', 'v_customer_phone');
         setFieldValue('customer_national_id', 'v_customer_national_id');
 
-        // دریافت و نمایش اقلام فاکتور به همراه محاسبه جمع کل نهایی
         const itemsDataJson = urlParams.get('items_data');
         const tbody = document.getElementById('items_table_body');
         let grandTotal = 0;
@@ -276,14 +275,22 @@
                 tbody.innerHTML = '';
                 
                 items.forEach((item, index) => {
-                    // پاک کردن کاما برای محاسبه جمع کل
                     let cleanTotal = Number(String(item.total).replace(/,/g, '')) || 0;
                     grandTotal += cleanTotal;
+
+                    // ترکیب نوع کالا، زیرمجموعه و شرح برای نمایش در رسید
+                    let typeDisplay = item.type;
+                    if (item.subtype) {
+                        typeDisplay += ` (${item.subtype})`;
+                    }
+                    if (item.name) {
+                        typeDisplay += ` - ${item.name}`;
+                    }
 
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${item.name || '---'}</td>
+                        <td>${typeDisplay}</td>
                         <td>${item.purity || '---'}</td>
                         <td>${item.weight || '---'}</td>
                         <td>${item.wage || '۰'}٪</td>

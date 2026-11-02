@@ -64,14 +64,31 @@
             font-weight: bold;
         }
         input, textarea {
-            padding: 10px;
+            padding: 10px 15px;
             border: 1px solid #ccc;
             border-radius: 6px;
             font-size: 14px;
             outline: none;
             transition: border-color 0.3s;
+            background-color: #fff;
         }
-        input:focus, textarea:focus {
+        select {
+            padding: 10px 15px 10px 30px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+            background-color: #fff;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: left 10px center;
+            background-size: 14px;
+        }
+        input:focus, select:focus, textarea:focus {
             border-color: #b8860b;
         }
         .product-item {
@@ -118,6 +135,9 @@
         }
         .btn-submit:hover {
             background-color: #966f0d;
+        }
+        .sub-type-container {
+            display: none;
         }
     </style>
 </head>
@@ -213,23 +233,39 @@
         const html = `
             <div class="product-item" id="row_${rowId}">
                 <div class="form-row">
-                    <div class="form-group" style="flex: 2;">
-                        <label>نوع جنس (شرح کالا):</label>
-                        <input type="text" class="p_name" required placeholder="مثال: انگشتر سولتر آوا">
+                    <div class="form-group">
+                        <label>نوع کالا:</label>
+                        <select class="p_type" onchange="handleTypeChange(this)">
+                            <option value="آبشده">آبشده</option>
+                            <option value="طلای زینتی">طلای زینتی</option>
+                        </select>
                     </div>
+                    <div class="form-group sub-type-container">
+                        <label>نوع طلای زینتی:</label>
+                        <select class="p_subtype">
+                            <option value="گردنبند">گردنبند</option>
+                            <option value="دستبند">دستبند</option>
+                            <option value="گوشواره">گوشواره</option>
+                            <option value="انگشتر">انگشتر</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 2;">
+                        <label>شرح جزئیات کالا:</label>
+                        <input type="text" class="p_name" required placeholder="مثال: سولتر آوا">
+                    </div>
+                </div>
+                <div class="form-row">
                     <div class="form-group">
                         <label>عیار:</label>
                         <input type="text" class="p_purity only-nums" value="750" required>
                     </div>
-                </div>
-                <div class="form-row">
                     <div class="form-group">
                         <label>وزن (گرم):</label>
                         <input type="text" class="p_weight decimal-inp" required placeholder="مثال: 2.12">
                     </div>
                     <div class="form-group">
                         <label>اجرت (%):</label>
-                        <input type="text" class="p_wage decimal-inp" placeholder="مثال: 12.5">
+                        <input type="text" class="p_wage decimal-inp" value="2" placeholder="مثال: 12.5">
                     </div>
                     <div class="form-group">
                         <label>قیمت کل (ریال):</label>
@@ -240,7 +276,24 @@
             </div>
         `;
         container.insertAdjacentHTML('beforeend', html);
-        initRowEvents(document.getElementById(`row_${rowId}`));
+        const newRow = document.getElementById(`row_${rowId}`);
+        initRowEvents(newRow);
+        calculateRow(newRow);
+    }
+
+    function handleTypeChange(selectElement) {
+        const rowElement = selectElement.closest('.product-item');
+        const subTypeContainer = rowElement.querySelector('.sub-type-container');
+        const wageInput = rowElement.querySelector('.p_wage');
+
+        if (selectElement.value === 'طلای زینتی') {
+            subTypeContainer.style.display = 'flex';
+            wageInput.value = ''; // خالی گذاشتن اجرت برای طلای زینتی
+        } else {
+            subTypeContainer.style.display = 'none';
+            wageInput.value = '2'; // پیش‌فرض آبشده ۲ درصد
+        }
+        calculateRow(rowElement);
     }
 
     function removeProductRow(rowId) {
@@ -281,8 +334,6 @@
         let goldPrice = cleanNumber(document.getElementById('gold_price').value);
         let purity = cleanNumber(rowElement.querySelector('.p_purity').value) || 750;
         let weight = parseFloat(faToEnDigits(rowElement.querySelector('.p_weight').value)) || 0;
-        
-        // تغییر از cleanNumber به parseFloat برای پشتیبانی از اعشار اجرت
         let wagePercent = parseFloat(faToEnDigits(rowElement.querySelector('.p_wage').value)) || 0;
 
         if (goldPrice > 0 && weight > 0) {
@@ -297,13 +348,17 @@
         }
     }
 
-    // آماده‌سازی اطلاعات برای ارسال به صفحه رسید
     function prepareData(e) {
         const rows = document.querySelectorAll('.product-item');
         let items = [];
 
         rows.forEach(row => {
+            let type = row.querySelector('.p_type').value;
+            let subtype = type === 'طلای زینتی' ? row.querySelector('.p_subtype').value : '';
+            
             items.push({
+                type: type,
+                subtype: subtype,
                 name: row.querySelector('.p_name').value,
                 purity: row.querySelector('.p_purity').value,
                 weight: row.querySelector('.p_weight').value,
@@ -315,7 +370,6 @@
         document.getElementById('items_data').value = JSON.stringify(items);
     }
 
-    // ایجاد اولین سطر به صورت پیش‌فرض در بارگذاری صفحه
     window.onload = function() {
         addProductRow();
     };
