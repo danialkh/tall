@@ -335,11 +335,21 @@
         let purity = cleanNumber(rowElement.querySelector('.p_purity').value) || 750;
         let weight = parseFloat(faToEnDigits(rowElement.querySelector('.p_weight').value)) || 0;
         let wagePercent = parseFloat(faToEnDigits(rowElement.querySelector('.p_wage').value)) || 0;
+        let productType = rowElement.querySelector('.p_type').value;
 
         if (goldPrice > 0 && weight > 0) {
             let basePricePerGram = (goldPrice / 750) * purity;
             let priceWithWage = basePricePerGram * (1 + (wagePercent / 100));
-            let unitPrice = priceWithWage * 1.0869642857;
+            
+            let unitPrice;
+            if (productType === 'آبشده') {
+                // برای آبشده فقط اجرت اعمال می‌شود و مالیات/سود اضافه نمی‌شود
+                unitPrice = priceWithWage;
+            } else {
+                // برای طلای زینتی ضریب مالیات و سود (معادل 1.08696...) لحاظ می‌شود
+                unitPrice = priceWithWage * 1.0869642857;
+            }
+            
             let totalPrice = unitPrice * weight;
 
             rowElement.querySelector('.p_total').value = formatNumber(Math.round(totalPrice));
